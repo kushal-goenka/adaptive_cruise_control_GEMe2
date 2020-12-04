@@ -1,0 +1,6 @@
+ld/
+devel/
+*.pyc
+build_isolated/
+devel_isolated/
+
