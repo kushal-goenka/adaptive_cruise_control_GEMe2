@@ -3,6 +3,10 @@
 Final Project to Implement Adaptive Cruise Control for the GEM Vehicle using ROS and Gazebo for simulation.
 
 
+## Recording data - Highbay
+
+    rosbag record /lidar1/scan /lidar1/velodyne_points /mako_1/mako_1/image_raw /novatel/imu -e "/front_radar/(.*)" -O inst5
+
 
 ## Getting Started
 
