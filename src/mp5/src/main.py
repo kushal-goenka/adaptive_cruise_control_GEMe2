@@ -13,8 +13,9 @@ import pickle
 from positionDetector.positionDetector import PositionDetector
 from safetyDetector.safetyDetector import SafetyDetector
 from locationGPS.locationGPS import locationGPS
+import sys
 
-def run_model(model_name):
+def run_model(model_name,runVehicle):
     resolution = 0.1
     rospy.init_node("gem1_dynamics")
     rate = rospy.Rate(100)  # 100 Hz    
@@ -43,8 +44,9 @@ def run_model(model_name):
         safe, pedPosition, distance = safety.checkSafety(currState, pedImgPosition)
         
         refState = decisionModule.get_ref_state(currState, perceptionResult, pedPosition, distance)
+        if runVehicle == "run":
+            controlModule.execute(currState, refState)
 
-        controlModule.execute(currState, refState)
         if(model_name=="highbay"):
             allGPS.append(gpsLoc.returnGPSCoord())
             if(i==8000):
@@ -53,5 +55,11 @@ def run_model(model_name):
             i += 1 
 
 if __name__ == "__main__":
-    run_model('gem')
+
+    if(len(sys.argv)>1):
+        runVehicle = sys.argv[1]
+    else:
+        runVehicle = "stationary"
+    run_model('gem',runVehicle)
+
     

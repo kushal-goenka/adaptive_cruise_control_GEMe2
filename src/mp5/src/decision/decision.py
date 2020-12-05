@@ -25,15 +25,7 @@ class VehicleDecision():
         # print("Current Distance:",perceptionInput)
         # print("Current Distance:",distance)
         
-        if not math.isnan(differencePosition) and differencePosition!=0:
-            print("Dist Change",self.distChangeCount)
-            print("Previous Distance:",self.previousPerception)    
-            print("Current Distance:",perceptionInput)
-            print("Difference:",differencePosition)
-            self.distChangeCount = 0
         
-        self.distChangeCount += 1
-        self.previousPerception = perceptionInput
         curr_x = currState.pose.position.x
         curr_y = currState.pose.position.y
         front_dist = perceptionInput
@@ -70,5 +62,21 @@ class VehicleDecision():
             else:
                 self.counter += 1
             ref_v = 5
+
+        if not math.isnan(differencePosition) and differencePosition!=0:
+            print("Dist Change",self.distChangeCount)
+            print("Previous Distance:",self.previousPerception)    
+            print("Current Distance:",perceptionInput)
+            print("Difference:",differencePosition)
+
+            time = differencePosition/ref_v
+            print("Time Taken for Change:",time,ref_v)
+
+            self.distChangeCount = 0
+
+
+        
+        self.distChangeCount += 1
+        self.previousPerception = perceptionInput
 
         return [target_x, target_y, ref_v]
