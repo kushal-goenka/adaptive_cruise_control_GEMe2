@@ -12,6 +12,7 @@ from util.util import euler_to_quaternion, quaternion_to_euler
 import pickle
 from positionDetector.positionDetector import PositionDetector
 from safetyDetector.safetyDetector import SafetyDetector
+from locationGPS.locationGPS import locationGPS
 
 def run_model(model_name):
     resolution = 0.1
@@ -23,7 +24,10 @@ def run_model(model_name):
     controlModule = VehicleController(model_name)
     posDetector = PositionDetector(resolution=resolution)
     safety = SafetyDetector(10, resolution)
+    gpsLoc = locationGPS()
 
+    allGPS = []
+    i = 0
     while not rospy.is_shutdown():
         # res = sensors.lidarReading()
         # print(res)
@@ -35,12 +39,19 @@ def run_model(model_name):
 
         pedImgPosition = posDetector.getPosition()
 
+        
         safe, pedPosition, distance = safety.checkSafety(currState, pedImgPosition)
         
         refState = decisionModule.get_ref_state(currState, perceptionResult, pedPosition, distance)
 
         controlModule.execute(currState, refState)
 
+        allGPS.append(gpsLoc.returnGPSCoord())
+        if(i==8000):
+            pickle.dump(allGPS, open("gpsDump", "wb"))
+            print("Dumped")
+        i += 1 
+
 if __name__ == "__main__":
-    run_model('gem')
+    run_model('highbay')
     

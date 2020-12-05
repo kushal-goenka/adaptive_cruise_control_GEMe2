@@ -12,13 +12,13 @@ import copy
 class VehiclePerception:
     def __init__(self, model_name='gem', resolution=0.1, side_range=(-5., 5.), 
             fwd_range=(0, 20.), height_range=(-1.6, 0.5)):
-        self.lidar = LidarProcessing(resolution=resolution, side_range=side_range, fwd_range=fwd_range, height_range=height_range)
+        self.lidar = LidarProcessing(resolution=resolution, model_name = model_name, side_range=side_range, fwd_range=fwd_range, height_range=height_range)
         
         self.bridge = CvBridge()
         self.cameraSub = rospy.Subscriber("/" + model_name + "/front_single_camera/front_single_camera/image_raw", Image, self.imageCallback)
         self.raw_image = None
         self.model_name = model_name
-
+        
     def imageCallback(self, data):
         try:
             # Convert a ROS image message into an OpenCV image
@@ -58,7 +58,7 @@ class VehiclePerception:
         return modelState
 
 class LidarProcessing:
-    def __init__(self, resolution=0.1, side_range=(-20., 20.), fwd_range=(-20., 20.),
+    def __init__(self, model_name="gem", resolution=0.1, side_range=(-20., 20.), fwd_range=(-20., 20.),
                          height_range=(-1.6, 0.5)):
         self.resolution = resolution
         self.side_range = side_range
@@ -66,10 +66,13 @@ class LidarProcessing:
         self.height_range = height_range
         
         self.cvBridge = CvBridge()
+        self.model_name = model_name
 
         # empty initial image
         self.birdsEyeViewPub = rospy.Publisher("/mp5/BirdsEye", Image, queue_size=1)
-        if(model_name="highbay"):
+
+        # self.pointCloudSub = rospy.Subscriber("/lidar1/velodyne_points", PointCloud2, self.__pointCloudHandler, queue_size=10)
+        if(self.model_name=="highbay"):
             self.pointCloudSub = rospy.Subscriber("/lidar1/velodyne_points", PointCloud2, self.__pointCloudHandler, queue_size=10)
         else:
             self.pointCloudSub = rospy.Subscriber("/velodyne_points", PointCloud2, self.__pointCloudHandler, queue_size=10)
