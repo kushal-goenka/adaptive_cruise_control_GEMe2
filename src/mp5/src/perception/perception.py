@@ -11,7 +11,7 @@ import copy
 
 class VehiclePerception:
     def __init__(self, model_name='gem', resolution=0.1, side_range=(-5., 5.), 
-            fwd_range=(0, 20.), height_range=(-1.6, 0.5)):
+            fwd_range=(1, 20.), height_range=(-1.6, 0.5)):
         self.lidar = LidarProcessing(resolution=resolution, model_name = model_name, side_range=side_range, fwd_range=fwd_range, height_range=height_range)
         
         self.bridge = CvBridge()
