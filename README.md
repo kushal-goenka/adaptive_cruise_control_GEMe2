@@ -4,6 +4,11 @@ Final Project to Implement Adaptive Cruise Control for the GEM Vehicle using ROS
 
 
 
+## Getting Started
+
+
+
+
 
 
 
@@ -27,11 +32,10 @@ Important Files:
 group4-20fa-ece498sma/src/mp5/launch/mp5.launch - Launch file 
 
 
-
-Packages:
-
+External Packages:
 
 https://github.com/swri-robotics/novatel_gps_driver - GPS Driver
+
 
 # How-To Common Issues:
 
