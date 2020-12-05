@@ -1,13 +1,16 @@
 import pickle
-
+import math
+import numpy as np
 class VehicleDecision():
     def __init__(self, fn):
         self.waypoint_list = pickle.load(open(fn,'rb')) # a list of waypoints
         self.pos_idx = int(1)
         self.vehicle_state = 'middle'
         self.counter = 0
+        self.previousPerception = 0
+        self.distChangeCount = 0 
         
-    def get_ref_state(self, currState, perceptionInput):
+    def get_ref_state(self, currState, perceptionInput,pedPosition,distance):
         """
             Get the reference state for the vehicle according to the current state and result from perception module
             Inputs: 
@@ -15,10 +18,33 @@ class VehicleDecision():
                 perceptionInput: float, currently the distance between vehicle and obstacle in front
             Outputs: reference state position and velocity of the vehicle 
         """
-
+        # positive value means car is moving closer to pedestrian
+        differencePosition = self.previousPerception - perceptionInput 
+        
+        
+        # print("Current Distance:",perceptionInput)
+        # print("Current Distance:",distance)
+        
+        if not math.isnan(differencePosition) and differencePosition!=0:
+            print("Dist Change",self.distChangeCount)
+            print("Previous Distance:",self.previousPerception)    
+            print("Current Distance:",perceptionInput)
+            print("Difference:",differencePosition)
+            self.distChangeCount = 0
+        
+        self.distChangeCount += 1
+        self.previousPerception = perceptionInput
         curr_x = currState.pose.position.x
         curr_y = currState.pose.position.y
         front_dist = perceptionInput
+        # print(type(pedPosition))
+        # difx = pedPosition[0] - curr_x
+        # dify = (curr_y-pedPosition[1])**2
+        # dis = np.sqrt( + )
+        # print("Ped Position:",pedPosition)
+        # print("Perception Input:",perceptionInput)
+        # print("Distance",distance)
+        
 
         # If the distance between vehicle and obstacle in front is less than 15, stop the vehicle
         if front_dist < 15:

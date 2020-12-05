@@ -10,8 +10,8 @@ from gazebo_msgs.srv import GetModelState, GetModelStateResponse
 import copy
 
 class VehiclePerception:
-    def __init__(self, model_name='gem', resolution=0.1, side_range=(-20., 20.), 
-            fwd_range=(-20., 20.), height_range=(-1.6, 0.5)):
+    def __init__(self, model_name='gem', resolution=0.1, side_range=(-5., 5.), 
+            fwd_range=(0, 20.), height_range=(-1.6, 0.5)):
         self.lidar = LidarProcessing(resolution=resolution, side_range=side_range, fwd_range=fwd_range, height_range=height_range)
         
         self.bridge = CvBridge()
@@ -69,7 +69,10 @@ class LidarProcessing:
 
         # empty initial image
         self.birdsEyeViewPub = rospy.Publisher("/mp5/BirdsEye", Image, queue_size=1)
-        self.pointCloudSub = rospy.Subscriber("/velodyne_points", PointCloud2, self.__pointCloudHandler, queue_size=10)
+        if(model_name="highbay"):
+            self.pointCloudSub = rospy.Subscriber("/lidar1/velodyne_points", PointCloud2, self.__pointCloudHandler, queue_size=10)
+        else:
+            self.pointCloudSub = rospy.Subscriber("/velodyne_points", PointCloud2, self.__pointCloudHandler, queue_size=10)
         x_img = np.floor(-0 / self.resolution).astype(np.int32)
         self.vehicle_x = x_img - int(np.floor(self.side_range[0] / self.resolution))
 

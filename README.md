@@ -19,6 +19,15 @@ http://luthuli.cs.uiuc.edu/~daf/courses/MAAV-2020/598-2020-lecture-materials.htm
 
 
 
+## Simulation Information
+____
+
+Important Files: 
+
+group4-20fa-ece498sma/src/mp5/launch/mp5.launch - Launch file 
+
+
+
 Packages:
 
 
