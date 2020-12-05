@@ -56,10 +56,14 @@ def run_model(model_name,runVehicle):
 
 if __name__ == "__main__":
 
+    runVehicle = "run"
+    model_name = "gem"
     if(len(sys.argv)>1):
-        runVehicle = sys.argv[1]
-    else:
-        runVehicle = "stationary"
-    run_model('gem',runVehicle)
+        if(sys.argv[1] == "gem" or sys.argv[1] == "highbay"):
+            model_name = sys.argv[1]
+    if(len(sys.argv)>2):
+        if(sys.argv[2] == "run" or sys.argv[2] == "stationary"):
+            runVehicle = sys.argv[2]
+    run_model(model_name,runVehicle)
 
     

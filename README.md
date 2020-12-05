@@ -6,6 +6,51 @@ Final Project to Implement Adaptive Cruise Control for the GEM Vehicle using ROS
 
 ## Getting Started
 
+Navigate to the root of the directory:
+
+    catkin_make
+    source devel/setup.bash
+
+Start roscore on another terminal by typing:
+
+    roscore
+
+To launch the default gazebo and rviz:
+
+    roslaunch mp5 mp5.launch
+    
+On another terminal:
+
+All the python files are located in the following directory:
+
+    cd group4-20fa-ece498sma/src/mp5/src
+
+For Simulation:
+
+    python set_pos.py --x 5.39069 --y -100.765
+    python main.py gem run
+    python main.py gem stationary (To keep the car still)
+
+
+For Highbay: (Navigate to the folders with the rostopics if looking at rosbags, or do nothing if live)
+
+    rosbag play -l <filename>.bag
+
+On another terminal:
+
+    python main.py highbay run
+
+On another terminal open rviz to visualize the different rostopics:
+
+    rviz
+
+
+
+NOTE: Every new terminal might need you to source from the project root directory:
+
+    source devel/setup.bash
+
+
 
 
 
