@@ -9,6 +9,7 @@ class VehicleDecision():
         self.counter = 0
         self.previousPerception = 0
         self.distChangeCount = 0 
+        self.reverseCount = 0
         
     def get_ref_state(self, currState, perceptionInput,pedPosition,distance):
         """
@@ -25,15 +26,7 @@ class VehicleDecision():
         # print("Current Distance:",perceptionInput)
         # print("Current Distance:",distance)
         
-        if not math.isnan(differencePosition) and differencePosition!=0:
-            print("Dist Change",self.distChangeCount)
-            print("Previous Distance:",self.previousPerception)    
-            print("Current Distance:",perceptionInput)
-            print("Difference:",differencePosition)
-            self.distChangeCount = 0
-        
-        self.distChangeCount += 1
-        self.previousPerception = perceptionInput
+
         curr_x = currState.pose.position.x
         curr_y = currState.pose.position.y
         front_dist = perceptionInput
@@ -57,7 +50,6 @@ class VehicleDecision():
 
             curr_x = currState.pose.position.x
             curr_y = currState.pose.position.y
-            
             distToTargetX = abs(target_x - curr_x)
             distToTargetY = abs(target_y - curr_y)
 
@@ -69,6 +61,24 @@ class VehicleDecision():
                     "next",self.waypoint_list[self.pos_idx][0],self.waypoint_list[self.pos_idx][1])
             else:
                 self.counter += 1
-            ref_v = 5
+            ref_v = 1
 
-        return [target_x, target_y, ref_v]
+        if not math.isnan(differencePosition) and differencePosition!=0:
+            print("Dist Change",self.distChangeCount)
+            print("Previous Distance:",self.previousPerception)    
+            print("Current Distance:",perceptionInput)
+            print("Difference:",differencePosition)
+
+            time = differencePosition/ref_v
+            print("Time Taken for Change:",time,ref_v)
+
+            self.distChangeCount = 0
+        
+        self.distChangeCount += 1
+        self.previousPerception = perceptionInput
+        if(ref_v>=0):
+            self.reverseCount = 0
+            return [target_x, target_y, ref_v]
+        else:
+            self.reverseCount +=1
+            return [self.waypoint_list[-self.reverseCount][0],self.waypoint_list[-self.reverseCount][1],ref_v*5]

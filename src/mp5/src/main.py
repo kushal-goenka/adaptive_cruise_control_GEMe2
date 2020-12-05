@@ -14,7 +14,9 @@ from positionDetector.positionDetector import PositionDetector
 from safetyDetector.safetyDetector import SafetyDetector
 from locationGPS.locationGPS import locationGPS
 
-def run_model(model_name):
+import sys
+
+def run_model(model_name,runVehicle):
     resolution = 0.1
     rospy.init_node("gem1_dynamics")
     rate = rospy.Rate(100)  # 100 Hz    
@@ -43,15 +45,21 @@ def run_model(model_name):
         safe, pedPosition, distance = safety.checkSafety(currState, pedImgPosition)
         
         refState = decisionModule.get_ref_state(currState, perceptionResult, pedPosition, distance)
-
-        controlModule.execute(currState, refState)
-
-        allGPS.append(gpsLoc.returnGPSCoord())
-        if(i==8000):
-            pickle.dump(allGPS, open("gpsDump", "wb"))
-            print("Dumped")
-        i += 1 
+        if runVehicle == "run" or perceptionResult < 15:
+            # print("Running away")
+            controlModule.execute(currState, refState)
+        
+        if(model_name=="highbay"):
+            allGPS.append(gpsLoc.returnGPSCoord())
+            if(i==8000):
+                pickle.dump(allGPS, open("gpsDump", "wb"))
+                print("Dumped")
+            i += 1 
 
 if __name__ == "__main__":
-    run_model('highbay')
+    if(len(sys.argv)>1):
+        runVehicle = sys.argv[1]
+    else:
+        runVehicle = "stationary"
+    run_model('gem',runVehicle)
     

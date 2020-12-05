@@ -13,7 +13,8 @@ import copy
 
 class locationGPS:
     def __init__(self,model_name="highbay"):
-        self.gpsSub = rospy.Subscriber("/novatel/bestxyz", NovatelXYZ, self.gpsCallback)
+        if model_name == "highbay":
+            self.gpsSub = rospy.Subscriber("/novatel/bestxyz", NovatelXYZ, self.gpsCallback)
         self.x = 0
         self.y = 0
         self.z = 0

@@ -1204,6 +1204,7 @@
       <script>
         <trajectory id="0" type="walking">
           
+            <waypoint><time>0</time><pose>100.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>1</time><pose>95.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>2</time><pose>90.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>3</time><pose>85.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>4</time><pose>80.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>5</time><pose>75.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>6</time><pose>70.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>7</time><pose>65.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>8</time><pose>60.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>9</time><pose>55.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>10</time><pose>50.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>11</time><pose>45.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>12</time><pose>40.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>13</time><pose>35.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>14</time><pose>30.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>15</time><pose>25.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>16</time><pose>20.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>17</time><pose>15.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>18</time><pose>10.39069 -100.765 0 0 0 0</pose></waypoint><waypoint><time>19</time><pose>5.39069 -100.765 0 0 0 0</pose></waypoint>
           
 
         </trajectory>
@@ -1323,11 +1324,7 @@
       <script>
       <trajectory id="0" type="standing">
       
-            <waypoint><time>0</time><pose>25.39069 -100.765 0 0 0 -3.14</pose></waypoint>
-            <waypoint><time>5</time><pose>25.39069 -100.765 0 0 0 -3.14</pose></waypoint>
-            <waypoint><time>10</time><pose>25.39069 -100.765 0 0 0 -3.14</pose></waypoint>
-            <waypoint><time>15</time><pose>25.39069 -100.765 0 0 0 -3.14</pose></waypoint>
-      
+           
       </trajectory>
       </script>
     </actor>

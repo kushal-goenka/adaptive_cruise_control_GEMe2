@@ -71,4 +71,4 @@ if __name__ == "__main__":
     x = argv.x
     y = argv.y
 
-    set_position(y = -98, x = 0, name='gem')
+    set_position(y = argv.y, x = argv.x, name='gem')
