@@ -45,13 +45,13 @@ def run_model(model_name):
         refState = decisionModule.get_ref_state(currState, perceptionResult, pedPosition, distance)
 
         controlModule.execute(currState, refState)
-
-        allGPS.append(gpsLoc.returnGPSCoord())
-        if(i==8000):
-            pickle.dump(allGPS, open("gpsDump", "wb"))
-            print("Dumped")
-        i += 1 
+        if(model_name=="highbay"):
+            allGPS.append(gpsLoc.returnGPSCoord())
+            if(i==8000):
+                pickle.dump(allGPS, open("gpsDump", "wb"))
+                print("Dumped")
+            i += 1 
 
 if __name__ == "__main__":
-    run_model('highbay')
+    run_model('gem')
     
