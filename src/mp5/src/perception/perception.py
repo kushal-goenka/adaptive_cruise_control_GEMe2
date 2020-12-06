@@ -8,6 +8,7 @@ from sensor_msgs.msg import PointCloud2
 from sensor_msgs import point_cloud2
 from gazebo_msgs.srv import GetModelState, GetModelStateResponse
 import copy
+from std_msgs.msg import Float64
 
 class VehiclePerception:
     def __init__(self, model_name='gem', resolution=0.1, side_range=(-5., 5.), 
@@ -69,6 +70,8 @@ class LidarProcessing:
         self.model_name = model_name
 
         # empty initial image
+        self.publishDistance = rospy.Publisher("/mp5/Distance", Float64, queue_size=1)
+
         self.birdsEyeViewPub = rospy.Publisher("/mp5/BirdsEye", Image, queue_size=1)
 
         # self.pointCloudSub = rospy.Subscriber("/lidar1/velodyne_points", PointCloud2, self.__pointCloudHandler, queue_size=10)
@@ -85,6 +88,7 @@ class LidarProcessing:
         
         self.x_front = float('nan')
         self.y_front = float('nan')
+    
 
     def __pointCloudHandler(self, data):
         """
@@ -215,6 +219,7 @@ class LidarProcessing:
         """
         front = np.sqrt(self.x_front**2+self.y_front**2)
         
+        self.publishDistance.publish(front)
         return front
 
     def get_lidar_reading(self):

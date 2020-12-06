@@ -24,7 +24,7 @@ class VehicleDecision():
         
         # print("Current Distance:",perceptionInput)
         # print("Current Distance:",distance)
-        
+        print("Current Distance:",perceptionInput)
         
         curr_x = currState.pose.position.x
         curr_y = currState.pose.position.y
@@ -39,7 +39,7 @@ class VehicleDecision():
         
 
         # If the distance between vehicle and obstacle in front is less than 15, stop the vehicle
-        if front_dist < 15:
+        if front_dist < 3:
             target_x = curr_x
             target_y = curr_y
             ref_v = -1

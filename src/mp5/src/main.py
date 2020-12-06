@@ -18,7 +18,7 @@ import sys
 def run_model(model_name,runVehicle):
     resolution = 0.1
     rospy.init_node("gem1_dynamics")
-    rate = rospy.Rate(100)  # 100 Hz    
+    rate = rospy.Rate(10)  # 100 Hz    
 
     perceptionModule = VehiclePerception(model_name)
     decisionModule = VehicleDecision('./waypoints')
@@ -29,23 +29,25 @@ def run_model(model_name,runVehicle):
 
     allGPS = []
     i = 0
+    print("Outside While loop")
     while not rospy.is_shutdown():
         # res = sensors.lidarReading()
+        print("distance")
         # print(res)
-        rate.sleep()  # Wait a while before trying to get a new state
+          # Wait a while before trying to get a new state
 
         # Get the current position and orientation of the vehicle
-        currState =  perceptionModule.gpsReading()
+        # currState =  perceptionModule.gpsReading()
         perceptionResult = perceptionModule.lidarReading()
 
-        pedImgPosition = posDetector.getPosition()
+        # pedImgPosition = posDetector.getPosition()
 
         
-        safe, pedPosition, distance = safety.checkSafety(currState, pedImgPosition)
-        
-        refState = decisionModule.get_ref_state(currState, perceptionResult, pedPosition, distance)
-        if runVehicle == "run":
-            controlModule.execute(currState, refState)
+        # safe, pedPosition, distance = safety.checkSafety(currState, pedImgPosition)
+        print("distance",perceptionResult)
+        # refState = decisionModule.get_ref_state(currState, perceptionResult, pedPosition, distance)
+        # if runVehicle == "run":
+        # controlModule.execute(currState, refState)
 
         if(model_name=="highbay"):
             allGPS.append(gpsLoc.returnGPSCoord())
@@ -53,6 +55,8 @@ def run_model(model_name,runVehicle):
                 pickle.dump(allGPS, open("gpsDump", "wb"))
                 print("Dumped")
             i += 1 
+
+        # rate.spin()
 
 if __name__ == "__main__":
 
@@ -65,5 +69,6 @@ if __name__ == "__main__":
         if(sys.argv[2] == "run" or sys.argv[2] == "stationary"):
             runVehicle = sys.argv[2]
     run_model(model_name,runVehicle)
+    print("In the Main fucntion")
 
     
