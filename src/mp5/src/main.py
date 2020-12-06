@@ -2,8 +2,8 @@ import rospy
 import numpy as np
 import argparse
 
-from gazebo_msgs.msg import  ModelState
-from controller.controller import VehicleController
+# from gazebo_msgs.msg import  ModelState
+# from controller.controller import VehicleController
 from perception.perception import VehiclePerception
 from decision.decision import VehicleDecision
 import time
@@ -22,9 +22,9 @@ def run_model(model_name,runVehicle):
 
     perceptionModule = VehiclePerception(model_name)
     decisionModule = VehicleDecision('./waypoints')
-    controlModule = VehicleController(model_name)
-    posDetector = PositionDetector(resolution=resolution)
-    safety = SafetyDetector(10, resolution)
+    # controlModule = VehicleController(model_name)
+    # posDetector = PositionDetector(resolution=resolution)
+    # safety = SafetyDetector(10, resolution)
     gpsLoc = locationGPS()
 
     allGPS = []

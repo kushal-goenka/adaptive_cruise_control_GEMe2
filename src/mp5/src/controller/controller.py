@@ -54,6 +54,7 @@
 import rospy
 import numpy as np
 import argparse
+import math
 
 from pacmod_msgs.msg import PositionWithSpeed, PacmodCmd
 from std_msgs.msg import String, Bool, Float32, Float64, Char
@@ -76,16 +77,20 @@ def speed_control(data):
     accel_cmd = PacmodCmd()
     
     global accel_flag
-    #print(accel_flag, "accel")
+    print(accel_flag, "accel")
     if accel_flag == False:
         brake_msg = PacmodCmd()
         brake_msg.f64_cmd = 0.0
         brake_pub.publish(brake_msg)
 
-        accel_cmd.f64_cmd = 0.325
+        accel_cmd.f64_cmd = 0
         accel_pub.publish(accel_cmd)
 
     else:
+        brake_msg = PacmodCmd()
+        brake_msg.f64_cmd = 0.0
+        brake_pub.publish(brake_msg)
+
         accel_cmd.f64_cmd = 0.4
         accel_pub.publish(accel_cmd)
         pass
@@ -144,28 +149,7 @@ def on_press(key):
     enable_pub.publish(Bool(enabled))
     gear_pub.publish(gear_cmd)
     brake_pub.publish(brake_cmd)
-    pass
 
-def execute(distance):
-    global enabled 
-    global gear_cmd
-    global accel_cmd
-    global brake_cmd
-    global accel_flag
-
-    if distance> -1 and distance < 15:
-        accel_flag = False
-        brake_cmd.f64_cmd = 0.5
-
-    else:
-        # print('ACCELERATING')
-        accel_flag = True
-        brake_cmd.f64_cmd = 0.0
-
-    enable_pub.publish(Bool(enabled))
-    gear_pub.publish(gear_cmd)
-    brake_pub.publish(brake_cmd)
-    pass
 
 # .32 threshold
 
@@ -177,7 +161,9 @@ def distanceCallback(distance):
     global brake_cmd
     global accel_flag
 
-    if distance > -1 and distance < 15:
+    if not enabled:
+		accel_flag = False
+    elif distance < 15:
         accel_flag = False
     else:
         accel_flag = True
