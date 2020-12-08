@@ -167,10 +167,10 @@ class VehicleController():
             if self.currentVelocity <= self.desiredVelocity:
                 self.accel_cmd.f64_cmd = self.accel_cmd.f64_cmd
             else:
-                self.accel_cmd.f64_cmd -= 0.005
+                self.accel_cmd.f64_cmd -= 0.01
 
-            if self.accel_cmd.f64_cmd <= 0.32:
-                self.accel_cmd.f64_cmd = 0.32
+            if self.accel_cmd.f64_cmd <= 0.25:
+                self.accel_cmd.f64_cmd = 0.25
 
             self.accel_pub.publish(self.accel_cmd)
 
