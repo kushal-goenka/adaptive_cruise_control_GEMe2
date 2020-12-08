@@ -162,6 +162,7 @@ class VehicleController():
             self.accel_pub.publish(self.accel_cmd)
             self.brake_pub.publish(self.brake_cmd)
         elif relativeVelocity < 0:
+            print("Acceleration",self.accel_cmd.f64_cmd)
             print("Relative",relativeVelocity,distance.data)
             if self.currentVelocity <= self.desiredVelocity:
                 self.accel_cmd.f64_cmd = self.accel_cmd.f64_cmd
