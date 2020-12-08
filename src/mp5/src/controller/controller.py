@@ -180,6 +180,7 @@ class VehicleController():
 
         if relativeVelocity > 0 or math.isnan(distance.data):
             # Pedestrian is far away or faster
+            print("Current Velocity",self.currentVelocity)
             print("Relative,distance",relativeVelocity,distance.data)
             self.accel_cmd.f64_cmd = self.max_accel
             self.brake_cmd.f64_cmd = 0.0
@@ -214,6 +215,9 @@ class VehicleController():
 
             if output > self.max_accel:
                 output = self.max_accel
+            elif output < 0:
+                output = 0
+
             print("Acceleration:",output)
             self.accel_cmd.f64_cmd = output
             self.accel_pub.publish(self.accel_cmd)
