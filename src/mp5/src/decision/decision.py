@@ -1,6 +1,9 @@
 import pickle
 import math
+from ackermann_msgs.msg import AckermannDrive
 import numpy as np
+import rospy
+
 class VehicleDecision():
     def __init__(self, fn):
         self.waypoint_list = pickle.load(open(fn,'rb')) # a list of waypoints
@@ -9,6 +12,12 @@ class VehicleDecision():
         self.counter = 0
         self.previousPerception = 0
         self.distChangeCount = 0 
+        self.previousVelocity = 0
+        self.controlSub = rospy.Subscriber("/gem/ackermann_cmd", AckermannDrive, self.controlCallback)
+        
+    def controlCallback(self,data):
+        # print("Speed:",data.speed)
+        self.previousVelocity = data.speed
         
     def get_ref_state(self, currState, perceptionInput,pedPosition,distance):
         """
@@ -19,12 +28,24 @@ class VehicleDecision():
             Outputs: reference state position and velocity of the vehicle 
         """
         # positive value means car is moving closer to pedestrian
-        differencePosition = self.previousPerception - perceptionInput 
-        
+        differencePosition = perceptionInput - self.previousPerception
+        relativeVelocity = 0
+
+        if not math.isnan(differencePosition) and differencePosition!=0:
+            # print("Dist Change",self.distChangeCount)
+            # print("Previous Distance:",self.previousPerception)    
+            # print("Current Distance:",perceptionInput)
+            # print("Difference:",differencePosition)
+            relativeVelocity = differencePosition/0.1
+            # print("Relative Velocity",relativeVelocity)
+            # print("Actual Velocity",self.previousVelocity)
+            # print("Time Taken for Change:",time,ref_v)
+            self.distChangeCount = 0
         
         # print("Current Distance:",perceptionInput)
         # print("Current Distance:",distance)
-        print("Current Distance:",perceptionInput)
+        # print("Current Distance:",perceptionInput)
+        # print("Previous Distance:",self.previousPerception)    
         
         curr_x = currState.pose.position.x
         curr_y = currState.pose.position.y
@@ -39,10 +60,11 @@ class VehicleDecision():
         
 
         # If the distance between vehicle and obstacle in front is less than 15, stop the vehicle
-        if front_dist < 3:
+        if front_dist < 10:
             target_x = curr_x
             target_y = curr_y
-            ref_v = -1
+            # print("Distance less than 5")
+            ref_v = 0
         else:
             target_x = self.waypoint_list[self.pos_idx][0]
             target_y = self.waypoint_list[self.pos_idx][1]
@@ -53,7 +75,7 @@ class VehicleDecision():
             distToTargetX = abs(target_x - curr_x)
             distToTargetY = abs(target_y - curr_y)
 
-            if ((distToTargetX < 0.5 and distToTargetY < 0.5)) or self.counter > 100:
+            if ((distToTargetX < 0.5 and distToTargetY < 0.5)) or self.counter > 1000:
                 self.counter = 0
                 self.pos_idx += 1
                 self.pos_idx = int(self.pos_idx % len(self.waypoint_list))
@@ -61,21 +83,20 @@ class VehicleDecision():
                     "next",self.waypoint_list[self.pos_idx][0],self.waypoint_list[self.pos_idx][1])
             else:
                 self.counter += 1
-            ref_v = 5
 
-        if not math.isnan(differencePosition) and differencePosition!=0:
-            print("Dist Change",self.distChangeCount)
-            print("Previous Distance:",self.previousPerception)    
-            print("Current Distance:",perceptionInput)
-            print("Difference:",differencePosition)
+            
 
-            time = differencePosition/ref_v
-            print("Time Taken for Change:",time,ref_v)
+            if front_dist < 20:
+                if(relativeVelocity!=0):
+                    ref_v = self.previousVelocity + relativeVelocity
+                    print("Previous,Relative:",self.previousVelocity,relativeVelocity)
+                    print("Ref v:",ref_v)
+                else:
+                    ref_v = self.previousVelocity
 
-            self.distChangeCount = 0
-
-
-        
+            else:
+                ref_v = 10
+    
         self.distChangeCount += 1
         self.previousPerception = perceptionInput
 
