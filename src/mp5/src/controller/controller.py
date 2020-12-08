@@ -1,5 +1,5 @@
 import rospy
-from ackermann_msgs.msg import AckermannDrive
+#from ackermann_msgs.msg import AckermannDrive
 import numpy as np
 from util.util import euler_to_quaternion, quaternion_to_euler
 
@@ -16,7 +16,7 @@ class VehicleController():
 
     def __init__(self, model_name='gem'):
         # Publisher to publish the control input to the vehicle model
-        self.controlPub = rospy.Publisher("/" + model_name + "/ackermann_cmd", AckermannDrive, queue_size = 1)
+        #self.controlPub = rospy.Publisher("/" + model_name + "/ackermann_cmd", AckermannDrive, queue_size = 1)
         self.model_name = model_name
 
 
@@ -130,9 +130,11 @@ class VehicleController():
         self.brake_pub.publish(self.brake_cmd)
 
     def distanceCallback(self,distance):
-        
+
+        #print("accel:",self.accel_cmd.f64_cmd)
+
         if not self.enabled or not self.accel_flag:
-            return 
+           return 
         
         # print("in Distance callback ",distance)
         # print("Previous:",previousDistance)
@@ -153,15 +155,17 @@ class VehicleController():
         if relativeVelocity > 0 or math.isnan(distance.data):
             # Pedestrian is far away or faster
             print("Relative,distance",relativeVelocity,distance.data)
-            self.accel_cmd.f64_cmd = 0.4
+            self.accel_cmd.f64_cmd = 0.35
+            self.brake_cmd.f64_cmd = 0.0
             self.accel_pub.publish(self.accel_cmd)
+            self.brake_pub.publish(self.brake_cmd)
         elif relativeVelocity < 0:
             print("Relative",relativeVelocity,distance.data)
             self.accel_cmd.f64_cmd = 0.0
             self.accel_pub.publish(self.accel_cmd)
 
         if distance.data < 10:
-            # print("Breaking")
+            print("Breaking")
             self.accel_cmd.f64_cmd = 0.0
             self.brake_cmd.f64_cmd = 0.5
 
@@ -178,7 +182,7 @@ class VehicleController():
         #controller part
         # rospy.init_node('GEM_Control', anonymous=True)
         rospy.Subscriber("/pacmod/as_tx/vehicle_speed", Float64, self.vehicleSpeedCallback)
-        self.enable_pub.publish(Bool(False))
+        #self.enable_pub.publish(Bool(False))
 
         # listener = Listener(on_press=self.on_press)
         # listener.start()

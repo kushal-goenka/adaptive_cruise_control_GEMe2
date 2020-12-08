@@ -14,13 +14,14 @@ from positionDetector.positionDetector import PositionDetector
 from safetyDetector.safetyDetector import SafetyDetector
 from locationGPS.locationGPS import locationGPS
 import sys
+from std_msgs.msg import String, Bool, Float32, Float64, Char
 
 from pynput.keyboard import Key, Listener, KeyCode
 
 def run_model(model_name,runVehicle):
     resolution = 0.1
     rospy.init_node("gem1_dynamics")
-    rate = rospy.Rate(100)  # 100 Hz    
+    rate = rospy.Rate(10)  # 100 Hz    
 
     perceptionModule = VehiclePerception(model_name)
     
@@ -37,7 +38,7 @@ def run_model(model_name,runVehicle):
 
     listener = Listener(on_press=controlModule.on_press)
     listener.start()
-    
+    controlModule.enable_pub.publish(Bool(False))
 
     print("Outside While loop")
     while not rospy.is_shutdown():
