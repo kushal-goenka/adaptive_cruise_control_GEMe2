@@ -3,7 +3,7 @@ import numpy as np
 import argparse
 
 from gazebo_msgs.msg import  ModelState
-# from controller.controller import VehicleController
+from controller.controller import VehicleController
 from perception.perception import VehiclePerception
 from decision.decision import VehicleDecision
 import time
@@ -15,6 +15,8 @@ from safetyDetector.safetyDetector import SafetyDetector
 from locationGPS.locationGPS import locationGPS
 import sys
 
+from pynput.keyboard import Key, Listener, KeyCode
+
 def run_model(model_name,runVehicle):
     resolution = 0.1
     rospy.init_node("gem1_dynamics")
@@ -24,7 +26,7 @@ def run_model(model_name,runVehicle):
     
     if(model_name == "gem"):
         decisionModule = VehicleDecision('./waypoints')
-        controlModule = VehicleController(model_name)
+    controlModule = VehicleController(model_name)
 
     posDetector = PositionDetector(resolution=resolution)
     safety = SafetyDetector(10, resolution)
@@ -32,10 +34,14 @@ def run_model(model_name,runVehicle):
 
     allGPS = []
     i = 0
-    # print("Outside While loop")
+
+    listener = Listener(on_press=controlModule.on_press)
+    listener.start()
+    
+
+    print("Outside While loop")
     while not rospy.is_shutdown():
         # res = sensors.lidarReading()
-        # print("distance")
         # print(res)
           # Wait a while before trying to get a new state
         rate.sleep()
@@ -53,6 +59,8 @@ def run_model(model_name,runVehicle):
             refState = decisionModule.get_ref_state(currState, perceptionResult, pedPosition, distance)
             if runVehicle == "run":
                 controlModule.execute(currState, refState)
+        if model_name == "highbay":
+            controlModule.run_model(model_name)
 
         if(model_name=="highbay"):
             allGPS.append(gpsLoc.returnGPSCoord())
