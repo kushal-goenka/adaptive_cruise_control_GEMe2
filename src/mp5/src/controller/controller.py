@@ -12,6 +12,8 @@ from pacmod_msgs.msg import PositionWithSpeed, PacmodCmd
 from std_msgs.msg import String, Bool, Float32, Float64, Char
 from pynput.keyboard import Key, Listener, KeyCode
 
+import time
+
 class VehicleController():
 
     def __init__(self, model_name='gem'):
@@ -33,6 +35,27 @@ class VehicleController():
         self.brake_cmd = PacmodCmd()
 
         self.previousDistance = 0
+        self.currentVelocity = 0.2
+
+        # speed control
+
+        self.sp_kp = 1.30
+        self.sp_kd = 0.1
+        self.sp_ki = 0.4
+        self.sp_windup_guard = 0.70
+
+        self.sp_Pterm = 0.0
+        self.sp_Iterm = 0.0
+        self.sp_Dterm = 0.0
+        
+        self.sp_prev_error = 0.0
+        self.sp_prev_time = time.time()
+        self.max_accel = 0.35
+
+
+        self.prev_time = time.time()
+
+        self.desired_speed = 0
 
     def execute(self, currentPose, targetPose):
         """
@@ -130,7 +153,8 @@ class VehicleController():
         self.brake_pub.publish(self.brake_cmd)
 
     def distanceCallback(self,distance):
-
+        
+        
         #print("accel:",self.accel_cmd.f64_cmd)
 
         if not self.enabled or not self.accel_flag:
@@ -152,16 +176,46 @@ class VehicleController():
         #     accel_cmd.f64_cmd = 0.4
         #     accel_pub.publish(accel_cmd)
 
+        self.desired_speed = self.currentVelocity + relativeVelocity
+
         if relativeVelocity > 0 or math.isnan(distance.data):
             # Pedestrian is far away or faster
             print("Relative,distance",relativeVelocity,distance.data)
-            self.accel_cmd.f64_cmd = 0.35
+            self.accel_cmd.f64_cmd = self.max_accel
             self.brake_cmd.f64_cmd = 0.0
             self.accel_pub.publish(self.accel_cmd)
             self.brake_pub.publish(self.brake_cmd)
+
         elif relativeVelocity < 0:
             print("Relative",relativeVelocity,distance.data)
-            self.accel_cmd.f64_cmd = 0.0
+            print("Current Velocity",self.currentVelocity)
+            print("Desired Velocity",self.desired_speed)
+            # self.accel_cmd.f64_cmd = 0.0
+            # self.accel_pub.publish(self.accel_cmd)
+
+
+            self.brake_cmd.f64_cmd = 0.0
+            self.brake_pub.publish(self.brake_cmd)
+
+            current_time =  time.time()
+            delta_time = current_time-self.prev_time
+            # print("Delta Time,",delta_time)
+            current_error = self.desired_speed - self.currentVelocity
+            delta_error = current_error-self.sp_prev_error
+            error_dot = delta_error/delta_time
+
+            self.sp_Pterm = current_error
+            self.sp_Dterm = error_dot
+
+            self.prev_time = current_time
+            self.sp_prev_error = current_error
+
+            output = self.sp_kp*self.sp_Pterm + self.sp_kd*self.sp_Dterm + self.sp_ki*self.sp_Iterm
+
+            if output > self.max_accel:
+                output = self.max_accel
+            print("Acceleration:",output)
+            self.accel_cmd.f64_cmd = output
             self.accel_pub.publish(self.accel_cmd)
 
         if distance.data < 10:
@@ -173,8 +227,9 @@ class VehicleController():
             self.brake_pub.publish(self.brake_cmd)
 
     def vehicleSpeedCallback(self,speed):
-
-        pass
+        
+        self.currentVelocity = speed.data
+        
 
 
     def run_model(self,model_name): 
@@ -235,6 +290,4 @@ class VehicleController():
 # if __name__ == "__main__":
 #     run_model('gem')
 
-    
 
-    
