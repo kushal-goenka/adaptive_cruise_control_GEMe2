@@ -128,7 +128,7 @@
     </actor>
 
 
-    <waypoint><time>0</time><pose>60.39069 -100.765 0 0 0 -3.14</pose></waypoint>
+            <waypoint><time>0</time><pose>60.39069 -100.765 0 0 0 -3.14</pose></waypoint>
             <waypoint><time>5</time><pose>60.39069 -100.765 0 0 0 -3.14</pose></waypoint>
             <waypoint><time>10</time><pose>60.39069 -100.765 0 0 0 -3.14</pose></waypoint>
             <waypoint><time>15</time><pose>60.39069 -100.765 0 0 0 -3.14</pose></waypoint>

@@ -3,7 +3,7 @@ import numpy as np
 import argparse
 
 from gazebo_msgs.msg import  ModelState
-from controller.controller import VehicleController
+# from controller.controller import VehicleController
 from perception.perception import VehiclePerception
 from decision.decision import VehicleDecision
 import time
@@ -45,13 +45,14 @@ def run_model(model_name,runVehicle):
 
         perceptionResult = perceptionModule.lidarReading()
         pedImgPosition = posDetector.getPosition()
-        safe, pedPosition, distance = safety.checkSafety(currState, pedImgPosition)
+        if model_name == "gem":
+            safe, pedPosition, distance = safety.checkSafety(currState, pedImgPosition)
 
         # print("distance",perceptionResult)
         if model_name == "gem":
             refState = decisionModule.get_ref_state(currState, perceptionResult, pedPosition, distance)
-        if runVehicle == "run":
-            controlModule.execute(currState, refState)
+            if runVehicle == "run":
+                controlModule.execute(currState, refState)
 
         if(model_name=="highbay"):
             allGPS.append(gpsLoc.returnGPSCoord())
