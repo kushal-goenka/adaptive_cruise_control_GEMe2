@@ -46,7 +46,7 @@ class VehicleController():
             # v = target_v
             # print("Velcithy with target > 0",v)
         else:
-            v = xError*k_s - 0.2*k_ds
+            v = xError*k_s - 0.05*k_ds
             # if v <= 0:
             #     v = 0
                  
