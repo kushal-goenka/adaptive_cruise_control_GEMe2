@@ -102,68 +102,71 @@ class VehicleDecision():
         # If the distance between vehicle and obstacle in front is less than 15, stop the vehicle
         if front_dist < 15:
             # print("Distance To Pedestrian Less than 15")
-            if self.velocityCounter < 1000:
-                target_x = curr_x
-                target_y = curr_y
-                ref_v = 0
-            else:
-                # curr_x = currState.pose.position.x
-                # curr_y = currState.pose.position.y
+            # if self.velocityCounter < 1000:
+            #     target_x = curr_x
+            #     target_y = curr_y
+            #     ref_v = 0
+            # else:
+            #     # curr_x = currState.pose.position.x
+            #     # curr_y = currState.pose.position.y
                 
-                # distToTargetX = abs(target_x - curr_x)
-                # distToTargetY = abs(target_y - curr_y)
+            #     # distToTargetX = abs(target_x - curr_x)
+            #     # distToTargetY = abs(target_y - curr_y)
 
-                # if ((distToTargetX < 0.5 and distToTargetY < 0.5)) or self.counter > 1000:
-                #     self.counter = 0
-                #     self.pos_idx += 1
-                #     self.pos_idx = int(self.pos_idx % len(self.waypoint_list))
-                #     print("reached",self.waypoint_list[self.pos_idx-1][0],self.waypoint_list[self.pos_idx-1][1],
-                #         "next",self.waypoint_list[self.pos_idx][0],self.waypoint_list[self.pos_idx][1])
-                # else:
-                #     self.counter += 1
+            #     # if ((distToTargetX < 0.5 and distToTargetY < 0.5)) or self.counter > 1000:
+            #     #     self.counter = 0
+            #     #     self.pos_idx += 1
+            #     #     self.pos_idx = int(self.pos_idx % len(self.waypoint_list))
+            #     #     print("reached",self.waypoint_list[self.pos_idx-1][0],self.waypoint_list[self.pos_idx-1][1],
+            #     #         "next",self.waypoint_list[self.pos_idx][0],self.waypoint_list[self.pos_idx][1])
+            #     # else:
+            #     #     self.counter += 1
 
-                if self.counter > 90:
-                    self.counter = 0
-                    self.pos_idx += 1
-                else:
-                    self.counter += 1
+            #     if self.counter > 90:
+            #         self.counter = 0
+            #         self.pos_idx += 1
+            #     else:
+            #         self.counter += 1
 
 
-                ref_v = 10
+            #     ref_v = 10
             
-            # print("Distance less than 5")
-            # print("front_dist:",front_dist)
+            # # print("Distance less than 5")
+            # # print("front_dist:",front_dist)
             
-            if self.waitTimeCount > 1000:
-                self.change_counter = 0
-                self.pos_idx +=1
-                if self.prev_direction == 0:
-                    print("Distance to pedestrian been < 15 for too Long")
-                    print("Switch lane to right")
-                    self.prev_direction = 1
-                    target_x = self.new_waypoints_right[self.pos_idx][0]
-                    target_y = self.new_waypoints_right[self.pos_idx][1]
-                    print("Target:",target_x,target_y)
-                    print("Current:",curr_x,curr_y)
-                else:
-                    print("Switch lane to left")
-                    self.prev_direction = 0
-                    target_x = self.new_waypoints_left[self.pos_idx][0]
-                    target_y = self.new_waypoints_left[self.pos_idx][1]
+            # if self.waitTimeCount > 1000:
+            #     self.change_counter = 0
+            #     self.pos_idx +=1
+            #     if self.prev_direction == 0:
+            #         print("Distance to pedestrian been < 15 for too Long")
+            #         print("Switch lane to right")
+            #         self.prev_direction = 1
+            #         target_x = self.new_waypoints_right[self.pos_idx][0]
+            #         target_y = self.new_waypoints_right[self.pos_idx][1]
+            #         print("Target:",target_x,target_y)
+            #         print("Current:",curr_x,curr_y)
+            #     else:
+            #         print("Switch lane to left")
+            #         self.prev_direction = 0
+            #         target_x = self.new_waypoints_left[self.pos_idx][0]
+            #         target_y = self.new_waypoints_left[self.pos_idx][1]
                 
-                self.waitTimeCount = 0
+            #     self.waitTimeCount = 0
             
-            self.waitTimeCount += 1
-            self.change_counter += 1
-            self.velocityCounter += 1
+            # self.waitTimeCount += 1
+            # self.change_counter += 1
+            # self.velocityCounter += 1
 
-            if self.prev_direction == 0:
-                target_x = self.new_waypoints_left[self.pos_idx][0]
-                target_y = self.new_waypoints_left[self.pos_idx][1]
-            else:
-                target_x = self.new_waypoints_right[self.pos_idx][0]
-                target_y = self.new_waypoints_right[self.pos_idx][1]
+            # if self.prev_direction == 0:
+            #     target_x = self.new_waypoints_left[self.pos_idx][0]
+            #     target_y = self.new_waypoints_left[self.pos_idx][1]
+            # else:
+            #     target_x = self.new_waypoints_right[self.pos_idx][0]
+            #     target_y = self.new_waypoints_right[self.pos_idx][1]
 
+            target_x = curr_x
+            target_y = curr_y
+            ref_v = -1
 
         else:
             self.velocityCounter = 0
@@ -190,6 +193,7 @@ class VehicleDecision():
                 self.counter += 1
 
             if front_dist < 20:
+
                 if(relativeVelocity!=0):
                     ref_v = self.previousVelocity + relativeVelocity
                     # print("Previous,Relative:",self.previousVelocity,relativeVelocity)
@@ -197,8 +201,17 @@ class VehicleDecision():
                 else:
                     ref_v = self.previousVelocity
 
+                if relativeVelocity > 0:
+                    # print("Speeding Up")
+                    wsd = 5
+                else:
+                    wsd = 5
+                    # print("Slowing Down")
+                    
+
             else:
-                ref_v = 10
+                # print("Speeding Up")
+                ref_v = self.previousVelocity
     
         self.distChangeCount += 1
         self.previousPerception = perceptionInput

@@ -15,6 +15,18 @@ from safetyDetector.safetyDetector import SafetyDetector
 from locationGPS.locationGPS import locationGPS
 import sys
 
+from ackermann_msgs.msg import AckermannDrive
+
+def controlCallback(data):
+    global prevVel
+        # print("Speed:",data.speed)
+    prevVel = data.speed
+
+controlSub = rospy.Subscriber("/gem/ackermann_cmd", AckermannDrive, controlCallback)
+prevVel = 0
+
+
+
 def run_model(model_name,runVehicle):
     resolution = 0.1
     rospy.init_node("gem1_dynamics")
@@ -50,8 +62,20 @@ def run_model(model_name,runVehicle):
         # print("distance",perceptionResult)
         if model_name == "gem":
             refState = decisionModule.get_ref_state(currState, perceptionResult, pedPosition, distance)
+
+            allGPS.append(prevVel)
+            
+            if(i==5000):
+                pickle.dump(allGPS, open("prevVel", "wb"))
+                print("Dumped")
+            i += 1
+            print(i)
+
+
         if runVehicle == "run":
             controlModule.execute(currState, refState)
+        
+        
 
         if(model_name=="highbay"):
             allGPS.append(gpsLoc.returnGPSCoord())
