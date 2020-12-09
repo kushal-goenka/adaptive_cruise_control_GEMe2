@@ -1,5 +1,5 @@
 import rospy
-#from ackermann_msgs.msg import AckermannDrive
+from ackermann_msgs.msg import AckermannDrive
 import numpy as np
 from util.util import euler_to_quaternion, quaternion_to_euler
 
@@ -10,13 +10,14 @@ import math
 
 from pacmod_msgs.msg import PositionWithSpeed, PacmodCmd
 from std_msgs.msg import String, Bool, Float32, Float64, Char
-from pynput.keyboard import Key, Listener, KeyCode
+# from pynput.keyboard import Key, Listener, KeyCode
 
 class VehicleController():
 
     def __init__(self, model_name='gem'):
         # Publisher to publish the control input to the vehicle model
-        #self.controlPub = rospy.Publisher("/" + model_name + "/ackermann_cmd", AckermannDrive, queue_size = 1)
+        if model_name == "gem":
+            self.controlPub = rospy.Publisher("/" + model_name + "/ackermann_cmd", AckermannDrive, queue_size = 1)
         self.model_name = model_name
 
 

@@ -1,7 +1,7 @@
 import rospy
 import numpy as np
 import argparse
-
+from ackermann_msgs.msg import AckermannDrive
 from gazebo_msgs.msg import  ModelState
 from controller.controller import VehicleController
 from perception.perception import VehiclePerception
@@ -16,17 +16,21 @@ from locationGPS.locationGPS import locationGPS
 import sys
 from std_msgs.msg import String, Bool, Float32, Float64, Char
 
-from pynput.keyboard import Key, Listener, KeyCode
+# from pynput.keyboard import Key, Listener, KeyCode
 
 def run_model(model_name,runVehicle):
     resolution = 0.1
     rospy.init_node("gem1_dynamics")
-    rate = rospy.Rate(10)  # 100 Hz    
+    rate = rospy.Rate(100)  # 100 Hz    
 
     perceptionModule = VehiclePerception(model_name)
     
     if(model_name == "gem"):
         decisionModule = VehicleDecision('./waypoints')
+    else:
+        listener = Listener(on_press=controlModule.on_press)
+        listener.start()
+        
     controlModule = VehicleController(model_name)
 
     posDetector = PositionDetector(resolution=resolution)
@@ -36,9 +40,9 @@ def run_model(model_name,runVehicle):
     allGPS = []
     i = 0
 
-    listener = Listener(on_press=controlModule.on_press)
-    listener.start()
-    controlModule.enable_pub.publish(Bool(False))
+    if model_name == "highbay":
+        controlModule.enable_pub.publish(Bool(False))
+    
 
     print("Outside While loop")
     while not rospy.is_shutdown():

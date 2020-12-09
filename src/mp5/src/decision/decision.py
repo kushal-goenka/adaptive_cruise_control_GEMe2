@@ -1,6 +1,6 @@
 import pickle
 import math
-#from ackermann_msgs.msg import AckermannDrive
+from ackermann_msgs.msg import AckermannDrive
 import numpy as np
 import rospy
 
@@ -75,7 +75,7 @@ class VehicleDecision():
             distToTargetX = abs(target_x - curr_x)
             distToTargetY = abs(target_y - curr_y)
 
-            if ((distToTargetX < 0.5 and distToTargetY < 0.5)) or self.counter > 1000:
+            if ((distToTargetX < 0.5 and distToTargetY < 0.5)) or self.counter > 100:
                 self.counter = 0
                 self.pos_idx += 1
                 self.pos_idx = int(self.pos_idx % len(self.waypoint_list))
@@ -95,7 +95,7 @@ class VehicleDecision():
                     ref_v = self.previousVelocity
 
             else:
-                ref_v = 10
+                ref_v = 5
     
         self.distChangeCount += 1
         self.previousPerception = perceptionInput
